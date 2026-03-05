@@ -1,0 +1,43 @@
+{
+  "kind": "ui_module",
+  "module_id": "sample-module",
+  "version": "0.1.0",
+  "display_name": "Sample Module",
+  "description": "Template for module interface contracts.",
+  "ui": {
+    "icon": "puzzle",
+    "category": "general",
+    "render_target": "chat_block",
+    "props_schema": {
+      "type": "object"
+    }
+  },
+  "state": {
+    "scope": "session",
+    "shape_schema": {
+      "type": "object"
+    }
+  },
+  "events": [
+    {
+      "name": "module_ready",
+      "payload_schema": {
+        "type": "object"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "name": "refresh",
+      "input_schema": {
+        "type": "object"
+      }
+    }
+  ],
+  "compatibility": {
+    "theme_support": "both",
+    "mobile_support": "partial",
+    "a11y_level": "basic",
+    "min_host_version": "1.1.0"
+  }
+}

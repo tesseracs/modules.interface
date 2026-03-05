@@ -1,0 +1,10 @@
+{
+  "name": "modules.interface",
+  "version": "0.1.0",
+  "description": "Shared module interface schema and template for Tesseracs UI modules.",
+  "type": "module",
+  "files": [
+    "schemas",
+    "templates"
+  ]
+}
