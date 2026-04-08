@@ -96,6 +96,58 @@
         "a11y_level": { "enum": ["none", "basic", "wcag-aa", "wcag-aaa"] },
         "min_host_version": { "type": "string" }
       }
+    },
+    "settings_schema": {
+      "type": "object",
+      "description": "Declarative schema for user-configurable settings (rendered dynamically in session settings UI).",
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "label"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "type": { "enum": ["boolean", "select", "text", "number"] },
+              "label": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "default": {},
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["value", "label"],
+                  "properties": {
+                    "value": {},
+                    "label": { "type": "string" }
+                  }
+                }
+              },
+              "allow_custom": { "type": "boolean" },
+              "multiline": { "type": "boolean" },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "step": { "type": "number" }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "confirm": { "type": "boolean" }
+            }
+          }
+        }
+      }
     }
   }
 }
