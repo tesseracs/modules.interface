@@ -39,5 +39,33 @@
     "mobile_support": "partial",
     "a11y_level": "basic",
     "min_host_version": "1.1.0"
+  },
+  "capabilities": {
+    "tier": "standard",
+    "requires": []
+  },
+  "mcp": {
+    "status": "unsupported",
+    "error": {
+      "code": "unsupported",
+      "message": "MCP integration is not declared by this template."
+    }
+  },
+  "localization": {
+    "default_language": "en",
+    "supported_languages": [
+      "en",
+      "sv"
+    ],
+    "strings": {
+      "en": {
+        "display_name": "Sample Module",
+        "description": "Template for module interface contracts."
+      },
+      "sv": {
+        "display_name": "Exempelmodul",
+        "description": "Mall för modulernas gränssnittskontrakt."
+      }
+    }
   }
 }

@@ -10,12 +10,335 @@
     "module_id",
     "version",
     "display_name",
+    "localization",
     "ui",
     "state",
     "events",
     "actions",
     "compatibility"
   ],
+  "$defs": {
+    "mcpStatus": {
+      "type": "string",
+      "enum": [
+        "unsupported",
+        "unavailable",
+        "auth_required",
+        "permission_denied",
+        "timeout",
+        "protocol_error",
+        "failed",
+        "ok"
+      ]
+    },
+    "mcpErrorCode": {
+      "type": "string",
+      "enum": [
+        "unsupported",
+        "unavailable",
+        "auth_required",
+        "permission_denied",
+        "timeout",
+        "protocol_error",
+        "failed"
+      ]
+    },
+    "mcpError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/mcpErrorCode"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retry_after_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "description": "Optional MCP integration declaration/status. Presence does not imply runtime support unless status is ok.",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/mcpStatus"
+        },
+        "server_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "error": {
+          "$ref": "#/$defs/mcpError"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "ok"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "error"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "ok"
+                }
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "unsupported"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "unsupported"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "unavailable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "auth_required"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "auth_required"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "permission_denied"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "permission_denied"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "timeout"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "timeout"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "protocol_error"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "protocol_error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "failed"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "properties": {
+                  "code": {
+                    "const": "failed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "localizedStrings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "localizedSettingText": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "localizedSettingsSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/localizedSettingText"
+          }
+        },
+        "actions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/localizedSettingText"
+          }
+        }
+      }
+    }
+  },
   "properties": {
     "kind": {
       "const": "ui_module"
@@ -38,26 +361,54 @@
     "ui": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["icon", "category", "render_target", "props_schema"],
+      "required": [
+        "icon",
+        "category",
+        "render_target",
+        "props_schema"
+      ],
       "properties": {
-        "icon": { "type": "string" },
-        "category": { "type": "string" },
-        "render_target": {
-          "enum": ["chat_block", "side_panel", "full_panel", "inline"]
+        "icon": {
+          "type": "string"
         },
-        "props_schema": { "type": "object" },
-        "preview_image": { "type": "string" }
+        "category": {
+          "type": "string"
+        },
+        "render_target": {
+          "enum": [
+            "chat_block",
+            "side_panel",
+            "full_panel",
+            "inline"
+          ]
+        },
+        "props_schema": {
+          "type": "object"
+        },
+        "preview_image": {
+          "type": "string"
+        }
       }
     },
     "state": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["scope", "shape_schema"],
+      "required": [
+        "scope",
+        "shape_schema"
+      ],
       "properties": {
         "scope": {
-          "enum": ["session", "project", "user", "ephemeral"]
+          "enum": [
+            "session",
+            "project",
+            "user",
+            "ephemeral"
+          ]
         },
-        "shape_schema": { "type": "object" }
+        "shape_schema": {
+          "type": "object"
+        }
       }
     },
     "events": {
@@ -65,10 +416,18 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "payload_schema"],
+        "required": [
+          "name",
+          "payload_schema"
+        ],
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
-          "payload_schema": { "type": "object" }
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload_schema": {
+            "type": "object"
+          }
         }
       },
       "uniqueItems": true
@@ -78,10 +437,18 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "input_schema"],
+        "required": [
+          "name",
+          "input_schema"
+        ],
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
-          "input_schema": { "type": "object" }
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input_schema": {
+            "type": "object"
+          }
         }
       },
       "uniqueItems": true
@@ -89,12 +456,101 @@
     "compatibility": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["theme_support", "mobile_support", "a11y_level", "min_host_version"],
+      "required": [
+        "theme_support",
+        "mobile_support",
+        "a11y_level",
+        "min_host_version"
+      ],
       "properties": {
-        "theme_support": { "enum": ["light", "dark", "both"] },
-        "mobile_support": { "enum": ["none", "partial", "full"] },
-        "a11y_level": { "enum": ["none", "basic", "wcag-aa", "wcag-aaa"] },
-        "min_host_version": { "type": "string" }
+        "theme_support": {
+          "enum": [
+            "light",
+            "dark",
+            "both"
+          ]
+        },
+        "mobile_support": {
+          "enum": [
+            "none",
+            "partial",
+            "full"
+          ]
+        },
+        "a11y_level": {
+          "enum": [
+            "none",
+            "basic",
+            "wcag-aa",
+            "wcag-aaa"
+          ]
+        },
+        "min_host_version": {
+          "type": "string"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Optional privileged capabilities required by the module runtime.",
+      "additionalProperties": false,
+      "required": [
+        "tier",
+        "requires"
+      ],
+      "properties": {
+        "tier": {
+          "enum": [
+            "standard",
+            "privileged"
+          ]
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "filesystem.read",
+              "filesystem.write",
+              "git.read",
+              "git.write",
+              "routing.context",
+              "routing.tasks",
+              "tools.invoke",
+              "viewer.overlay",
+              "state.session",
+              "state.project"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "mcp": {
+      "$ref": "#/$defs/mcp"
+    },
+    "client_catalog": {
+      "type": "object",
+      "description": "Declares that the module's client bundle exports a getCatalog() function returning a categorised symbol/function catalog for tab-completion.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the client bundle exports getCatalog()."
+        },
+        "expression_aware": {
+          "type": "boolean",
+          "description": "When true, getCatalog({ expression }) returns expression-specific transform results."
+        },
+        "recent_items_key": {
+          "type": "string",
+          "description": "localStorage key for persisting recently-used catalog selections."
+        },
+        "max_recent": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of recently-used items to persist. Defaults to 10."
+        }
       }
     },
     "settings_schema": {
@@ -106,30 +562,64 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id", "type", "label"],
+            "required": [
+              "id",
+              "type",
+              "label"
+            ],
             "additionalProperties": true,
             "properties": {
-              "id": { "type": "string", "minLength": 1 },
-              "type": { "enum": ["boolean", "select", "text", "number"] },
-              "label": { "type": "string", "minLength": 1 },
-              "description": { "type": "string" },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "boolean",
+                  "select",
+                  "text",
+                  "number"
+                ]
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
               "default": {},
               "options": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["value", "label"],
+                  "required": [
+                    "value",
+                    "label"
+                  ],
                   "properties": {
                     "value": {},
-                    "label": { "type": "string" }
+                    "label": {
+                      "type": "string"
+                    }
                   }
                 }
               },
-              "allow_custom": { "type": "boolean" },
-              "multiline": { "type": "boolean" },
-              "min": { "type": "number" },
-              "max": { "type": "number" },
-              "step": { "type": "number" }
+              "allow_custom": {
+                "type": "boolean"
+              },
+              "multiline": {
+                "type": "boolean"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "step": {
+                "type": "number"
+              }
             }
           }
         },
@@ -137,13 +627,80 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id", "label"],
+            "required": [
+              "id",
+              "label"
+            ],
             "additionalProperties": false,
             "properties": {
-              "id": { "type": "string", "minLength": 1 },
-              "label": { "type": "string", "minLength": 1 },
-              "description": { "type": "string" },
-              "confirm": { "type": "boolean" }
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "confirm": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "localization": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "User-facing language support for module. Hosts pass the selected user language; if unsupported, hosts must show a clear fallback-language notice.",
+      "required": [
+        "default_language",
+        "supported_languages"
+      ],
+      "properties": {
+        "default_language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "sv"
+          ]
+        },
+        "supported_languages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "en",
+              "sv"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "strings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "en": {
+              "$ref": "#/$defs/localizedStrings"
+            },
+            "sv": {
+              "$ref": "#/$defs/localizedStrings"
+            }
+          }
+        },
+        "settings_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "en": {
+              "$ref": "#/$defs/localizedSettingsSchema"
+            },
+            "sv": {
+              "$ref": "#/$defs/localizedSettingsSchema"
             }
           }
         }
